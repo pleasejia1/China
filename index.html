@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多功能工具集</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #4F46E5;
+      --primary-light: #EEF2FF;
+      --secondary-color: #10B981;
+      --text-color: #1F2937;
+      --text-light: #6B7280;
+      --border-color: #E5E7EB;
+      --bg-color: #F9FAFB;
+      --white: #FFFFFF;
+      --header-bg: #FFFFFF;
+      --tab-active: #4F46E5;
+      --tab-hover: #F3F4F6;
+    }
+
+    [data-theme="dark"] {
+      --primary-color: #818CF8;
+      --primary-light: #3730A3;
+      --secondary-color: #34D399;
+      --text-color: #F9FAFB;
+      --text-light: #9CA3AF;
+      --border-color: #374151;
+      --bg-color: #111827;
+      --white: #1F2937;
+      --header-bg: #1F2937;
+      --tab-active: #818CF8;
+      --tab-hover: #374151;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-color);
+      padding: 16px 0;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      padding: 16px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-light);
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .nav-tab:hover {
+      background: var(--tab-hover);
+      color: var(--text-color);
+    }
+
+    .nav-tab.active {
+      color: var(--tab-active);
+      background: var(--primary-light);
+    }
+
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background: var(--tab-active);
+      border-radius: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--tab-hover);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-light);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    .page-content {
+      display: none;
+    }
+
+    .page-content.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border-radius: 2px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+    }
+
+    .tool-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .tool-card:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .tool-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tool-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, #ECFDF5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tool-icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--primary-color);
+    }
+
+    .tool-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .tool-subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .input-row input {
+      flex: 1;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.2s;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .input-row input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .input-row select {
+      padding: 12px 14px;
+      font-size: 14px;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--white);
+      color: var(--text-color);
+      appearance: none;
+      min-width: 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    .input-row select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .swap-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      background: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .swap-btn:hover {
+      border-color: var(--primary-color);
+      background: var(--primary-light);
+      transform: rotate(180deg);
+    }
+
+    .swap-btn svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary-color);
+    }
+
+    .result-box {
+      background: linear-gradient(135deg, var(--primary-light) 0%, #ECFDF5 100%);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .result-label {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .result-unit {
+      font-size: 14px;
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .error-message {
+      font-size: 12px;
+      color: #EF4444;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .todo-input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .todo-input-row input {
+      flex: 1;
+      padding: 12px 14px;
+      font-size: 14px;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.2s;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .todo-input-row input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .add-btn {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .todo-list {
+      list-style: none;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-color);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+
+    .todo-item:hover {
+      background: var(--tab-hover);
+    }
+
+    .todo-item.completed {
+      opacity: 0.6;
+    }
+
+    .todo-item.completed .todo-text {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+
+    .todo-checkbox {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .todo-checkbox.checked {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .todo-checkbox svg {
+      width: 12px;
+      height: 12px;
+      color: white;
+      display: none;
+    }
+
+    .todo-checkbox.checked svg {
+      display: block;
+    }
+
+    .todo-text {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text-color);
+      word-break: break-all;
+    }
+
+    .todo-delete {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .todo-delete:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .todo-delete svg {
+      width: 16px;
+      height: 16px;
+      color: #EF4444;
+    }
+
+    .todo-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .todo-stat-item {
+      text-align: center;
+    }
+
+    .todo-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .todo-stat-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .calculator-display {
+      background: var(--bg-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      text-align: right;
+    }
+
+    .calculator-display input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-color);
+      text-align: right;
+      outline: none;
+    }
+
+    .calculator-history {
+      font-size: 14px;
+      color: var(--text-light);
+      min-height: 20px;
+    }
+
+    .calculator-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .calc-btn {
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .calc-btn:hover {
+      background: var(--tab-hover);
+    }
+
+    .calc-btn.operator {
+      background: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .calc-btn.operator:hover {
+      background: rgba(79, 70, 229, 0.2);
+    }
+
+    .calc-btn.equal {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      grid-column: span 2;
+    }
+
+    .calc-btn.equal:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .calc-btn.clear {
+      background: #FEE2E2;
+      color: #EF4444;
+    }
+
+    .calc-btn.clear:hover {
+      background: #FECACA;
+    }
+
+    .stats-panel {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary-light) 0%, #ECFDF5 100%);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+    }
+
+    .stat-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary-color);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    .recent-usage {
+      margin-top: 24px;
+    }
+
+    .recent-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 12px;
+    }
+
+    .recent-list {
+      list-style: none;
+    }
+
+    .recent-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--bg-color);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .recent-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recent-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary-color);
+    }
+
+    .recent-info {
+      flex: 1;
+    }
+
+    .recent-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .recent-time {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .recent-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .import-export {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--white);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .action-btn:hover {
+      border-color: var(--primary-color);
+      background: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border-color: transparent;
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .action-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .resume-page {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .resume-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      color: white;
+      margin-bottom: 24px;
+    }
+
+    .resume-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .resume-avatar svg {
+      width: 60px;
+      height: 60px;
+    }
+
+    .resume-name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .resume-title {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .resume-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .resume-link {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .resume-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .resume-link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .resume-section {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .resume-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .resume-section-title svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary-color);
+    }
+
+    .about-content {
+      font-size: 15px;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-tag {
+      padding: 8px 16px;
+      background: var(--primary-light);
+      color: var(--primary-color);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 32px;
+      padding-bottom: 24px;
+      border-left: 2px solid var(--border-color);
+      margin-left: 8px;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+      border-left-color: transparent;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary-color);
+    }
+
+    .timeline-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .timeline-company {
+      font-size: 14px;
+      color: var(--primary-color);
+      margin: 4px 0 8px;
+    }
+
+    .timeline-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .timeline-date {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .contact-item svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary-color);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .skill-item {
+      background: linear-gradient(135deg, var(--primary-light) 0%, #ECFDF5 100%);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .skill-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .skill-header svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary-color);
+    }
+
+    .skill-header span {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-tags span {
+      padding: 4px 12px;
+      background: white;
+      border-radius: 12px;
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .project-card {
+      background: var(--bg-color);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .project-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: var(--primary-color);
+    }
+
+    .project-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .project-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, #ECFDF5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary-color);
+    }
+
+    .project-info h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 2px;
+    }
+
+    .project-info span {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .project-desc {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .project-tags span {
+      padding: 4px 10px;
+      background: var(--primary-light);
+      color: var(--primary-color);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: var(--bg-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-light);
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-body textarea {
+      width: 100%;
+      height: 200px;
+      padding: 14px;
+      font-size: 14px;
+      font-family: monospace;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      resize: none;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .modal-body textarea:focus {
+      border-color: var(--primary-color);
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-btn.cancel {
+      border: 2px solid var(--border-color);
+      background: var(--white);
+      color: var(--text-color);
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--bg-color);
+    }
+
+    .modal-btn.confirm {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      border: none;
+      color: white;
+    }
+
+    .modal-btn.confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-color);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 2000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .nav-tabs {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+
+      .nav-tab {
+        padding: 10px 16px;
+        flex-shrink: 0;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .input-row {
+        flex-direction: column;
+      }
+
+      .input-row input,
+      .input-row select {
+        width: 100%;
+        min-width: auto;
+      }
+
+      .swap-btn {
+        transform: rotate(90deg);
+        margin: 8px 0;
+      }
+
+      .swap-btn:hover {
+        transform: rotate(-90deg);
+      }
+
+      .calculator-buttons {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .resume-header {
+        padding: 30px 20px;
+      }
+
+      .resume-name {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="nav-container">
+      <div class="logo">工具集</div>
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-page="tools">工具</button>
+        <button class="nav-tab" data-page="stats">统计</button>
+        <button class="nav-tab" data-page="about">关于我</button>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="tools-page" class="page-content active">
+      <h1 class="section-title">实用工具</h1>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <div class="tool-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-title">单位换算</div>
+              <div class="tool-subtitle">长度与重量转换</div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>长度换算</label>
+            <div class="input-row">
+              <input type="number" id="lengthFrom" placeholder="输入数值" step="any">
+              <select id="lengthFromUnit">
+                <option value="mm">毫米 (mm)</option>
+                <option value="cm">厘米 (cm)</option>
+                <option value="m">米 (m)</option>
+                <option value="km">千米 (km)</option>
+                <option value="in">英寸 (in)</option>
+                <option value="ft">英尺 (ft)</option>
+                <option value="yd">码 (yd)</option>
+                <option value="mi">英里 (mi)</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="swap-btn" onclick="swapLengthUnits()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="input-group">
+            <label>转换为</label>
+            <div class="input-row">
+              <input type="number" id="lengthTo" placeholder="结果" readonly>
+              <select id="lengthToUnit">
+                <option value="mm">毫米 (mm)</option>
+                <option value="cm">厘米 (cm)</option>
+                <option value="m">米 (m)</option>
+                <option value="km">千米 (km)</option>
+                <option value="in">英寸 (in)</option>
+                <option value="ft">英尺 (ft)</option>
+                <option value="yd">码 (yd)</option>
+                <option value="mi">英里 (mi)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="result-box">
+            <div class="result-label">换算结果</div>
+            <div class="result-value" id="lengthResult">—</div>
+          </div>
+          <div class="error-message" id="lengthError">请输入有效的数字</div>
+
+          <div style="height: 20px;"></div>
+
+          <div class="input-group">
+            <label>重量换算</label>
+            <div class="input-row">
+              <input type="number" id="weightFrom" placeholder="输入数值" step="any">
+              <select id="weightFromUnit">
+                <option value="mg">毫克 (mg)</option>
+                <option value="g">克 (g)</option>
+                <option value="kg">千克 (kg)</option>
+                <option value="t">吨 (t)</option>
+                <option value="oz">盎司 (oz)</option>
+                <option value="lb">磅 (lb)</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="swap-btn" onclick="swapWeightUnits()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="input-group">
+            <label>转换为</label>
+            <div class="input-row">
+              <input type="number" id="weightTo" placeholder="结果" readonly>
+              <select id="weightToUnit">
+                <option value="mg">毫克 (mg)</option>
+                <option value="g">克 (g)</option>
+                <option value="kg">千克 (kg)</option>
+                <option value="t">吨 (t)</option>
+                <option value="oz">盎司 (oz)</option>
+                <option value="lb">磅 (lb)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="result-box">
+            <div class="result-label">换算结果</div>
+            <div class="result-value" id="weightResult">—</div>
+          </div>
+          <div class="error-message" id="weightError">请输入有效的数字</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <div class="tool-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-title">待办事项</div>
+              <div class="tool-subtitle">高效管理日常任务</div>
+            </div>
+          </div>
+
+          <div class="todo-input-row">
+            <input type="text" id="todoInput" placeholder="添加新任务...">
+            <button class="add-btn" onclick="addTodo()">添加</button>
+          </div>
+
+          <ul class="todo-list" id="todoList"></ul>
+
+          <div class="todo-stats">
+            <div class="todo-stat-item">
+              <div class="todo-stat-value" id="todoTotal">0</div>
+              <div class="todo-stat-label">总任务</div>
+            </div>
+            <div class="todo-stat-item">
+              <div class="todo-stat-value" id="todoCompleted">0</div>
+              <div class="todo-stat-label">已完成</div>
+            </div>
+            <div class="todo-stat-item">
+              <div class="todo-stat-value" id="todoProgress">0%</div>
+              <div class="todo-stat-label">完成率</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <div class="tool-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="16" y1="18" x2="16" y2="22"></line>
+                <line x1="8" y1="18" x2="8" y2="22"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="tool-title">计算器</div>
+              <div class="tool-subtitle">基本数学运算</div>
+            </div>
+          </div>
+
+          <div class="calculator-display">
+            <div class="calculator-history" id="calcHistory"></div>
+            <input type="text" id="calcDisplay" readonly value="0">
+          </div>
+
+          <div class="calculator-buttons">
+            <button class="calc-btn clear" onclick="clearCalculator()">C</button>
+            <button class="calc-btn" onclick="appendToDisplay('(')">(</button>
+            <button class="calc-btn" onclick="appendToDisplay(')')">)</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('/')">÷</button>
+            <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+            <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+            <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+            <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+            <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+            <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('-')">−</button>
+            <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+            <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+            <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+            <button class="calc-btn" onclick="appendToDisplay('0')">0</button>
+            <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+            <button class="calc-btn equal" onclick="calculate()">=</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="stats-page" class="page-content">
+      <h1 class="section-title">使用统计</h1>
+      <div class="stats-panel">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20V10"></path>
+                <path d="M18 20V4"></path>
+                <path d="M6 20v-6"></path>
+              </svg>
+            </div>
+            <div class="stat-value" id="statConversions">0</div>
+            <div class="stat-label">换算次数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+            </div>
+            <div class="stat-value" id="statTodos">0</div>
+            <div class="stat-label">待办任务</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="stat-value" id="statCompleted">0%</div>
+            <div class="stat-label">完成率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="16" y1="18" x2="16" y2="22"></line>
+                <line x1="8" y1="18" x2="8" y2="22"></line>
+              </svg>
+            </div>
+            <div class="stat-value" id="statCalculations">0</div>
+            <div class="stat-label">计算次数</div>
+          </div>
+        </div>
+
+        <div class="recent-usage">
+          <div class="recent-title">最近使用记录</div>
+          <ul class="recent-list" id="recentList"></ul>
+        </div>
+
+        <div class="import-export">
+          <button class="action-btn" onclick="showExportModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            导出数据
+          </button>
+          <button class="action-btn primary" onclick="showImportModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            导入数据
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="about-page" class="page-content resume-page">
+      <div class="resume-header">
+        <div class="resume-avatar">
+          <img src="https://neeko-copilot.bytedance.net/api/text_to_image?prompt=professional%20young%20asian%20male%20portrait%20photo%20headshot%20business%20formal%20attire%20clean%20background&image_size=square_hd" alt="郑威" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+        </div>
+        <div class="resume-name">郑威</div>
+        <div class="resume-title">应届毕业生 · 人工智能技术应用</div>
+        <div class="resume-links">
+          <div class="resume-link" title="电话: 13075930120">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+          </div>
+          <div class="resume-link" title="邮箱: 3181829003@qq.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"></path>
+            </svg>
+          </div>
+          <div class="resume-link" title="期望薪资: 5000">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+        </div>
+        <div style="margin-top: 16px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 13px;">应届毕业生</span>
+          <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 13px;">人工智能技术应用</span>
+          <span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 13px;">专科</span>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+          </svg>
+          教育经历
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">福州软件职业技术学院</div>
+          <div class="timeline-company">人工智能技术应用 · 大专</div>
+          <div class="timeline-desc">全日制 · 智能产业学院 · 福州<br><br>积极参加校园各种活动，报名参加了软件测试考证，对待他人友善，乐观。</div>
+          <div class="timeline-date">2024-10 ~ 2027-06</div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          个人简介
+        </div>
+        <div class="about-content">
+          有责任感，乐观，积极面对困难和挑战。具备良好的学习能力和团队协作精神，善于沟通交流，对待工作认真负责，能够快速适应新环境和新技术。
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          专业技能
+        </div>
+        <div class="skills-grid">
+          <div class="skill-item">
+            <div class="skill-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"></path>
+              </svg>
+              <span>人工智能</span>
+            </div>
+            <div class="skill-tags">
+              <span>机器学习基础</span>
+              <span>深度学习入门</span>
+              <span>Python</span>
+              <span>TensorFlow</span>
+            </div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+              </svg>
+              <span>软件开发</span>
+            </div>
+            <div class="skill-tags">
+              <span>C/C++</span>
+              <span>Java</span>
+              <span>SQL</span>
+              <span>Git</span>
+            </div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 4v16H4V4h16zm-2 14H6v-2h12v2zm0-4H6v-2h12v2zm0-4H6V6h12v2z"></path>
+              </svg>
+              <span>前端开发</span>
+            </div>
+            <div class="skill-tags">
+              <span>HTML5</span>
+              <span>CSS3</span>
+              <span>JavaScript</span>
+              <span>Vue.js</span>
+            </div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              <span>软件测试</span>
+            </div>
+            <div class="skill-tags">
+              <span>测试用例设计</span>
+              <span>缺陷管理</span>
+              <span>自动化测试</span>
+              <span>功能测试</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          工作经历
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">软件测试实习生</div>
+          <div class="timeline-company">福州某科技有限公司</div>
+          <div class="timeline-desc">参与公司核心产品的功能测试工作，编写测试用例，执行测试并记录缺陷，协助开发团队进行问题定位和修复验证。</div>
+          <div class="timeline-date">2025-07 ~ 2025-09</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-title">AI项目助理</div>
+          <div class="timeline-company">校园AI实验室</div>
+          <div class="timeline-desc">协助导师进行机器学习模型训练和数据预处理工作，参与AI项目的文档编写和演示材料制作。</div>
+          <div class="timeline-date">2025-03 ~ 2025-06</div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          项目经验
+        </div>
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"></path>
+                </svg>
+              </div>
+              <div class="project-info">
+                <h4>智能客服聊天机器人</h4>
+                <span>团队项目 · 2025年</span>
+              </div>
+            </div>
+            <p class="project-desc">基于Python和深度学习框架开发的智能客服系统，支持自然语言理解和自动回复功能，提升客户服务效率。</p>
+            <div class="project-tags">
+              <span>Python</span>
+              <span>TensorFlow</span>
+              <span>自然语言处理</span>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+              </div>
+              <div class="project-info">
+                <h4>校园二手交易平台</h4>
+                <span>个人项目 · 2024年</span>
+              </div>
+            </div>
+            <p class="project-desc">使用Vue.js开发的校园二手物品交易平台，支持发布商品、搜索筛选、在线聊天等功能。</p>
+            <div class="project-tags">
+              <span>Vue.js</span>
+              <span>Node.js</span>
+              <span>MySQL</span>
+            </div>
+          </div>
+          <div class="project-card">
+            <div class="project-header">
+              <div class="project-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="project-info">
+                <h4>图像识别分类系统</h4>
+                <span>课程设计 · 2025年</span>
+              </div>
+            </div>
+            <p class="project-desc">基于卷积神经网络的图像分类系统，实现对多种物体类别的识别，准确率达到95%以上。</p>
+            <div class="project-tags">
+              <span>Python</span>
+              <span>PyTorch</span>
+              <span>CNN</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resume-section">
+        <div class="resume-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+          </svg>
+          联系方式
+        </div>
+        <div class="contact-info">
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            </svg>
+            13075930120
+          </div>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"></path>
+            </svg>
+            3181829003@qq.com
+          </div>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"></path>
+              <path d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
+            </svg>
+            福州
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">导出数据</div>
+        <button class="modal-close" onclick="closeExportModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <textarea id="exportData" readonly></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn cancel" onclick="closeExportModal()">取消</button>
+        <button class="modal-btn confirm" onclick="copyExportData()">复制数据</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="importModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">导入数据</div>
+        <button class="modal-close" onclick="closeImportModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <textarea id="importData" placeholder="粘贴导出的数据..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn cancel" onclick="closeImportModal()">取消</button>
+        <button class="modal-btn confirm" onclick="importData()">导入数据</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const lengthUnits = {
+      mm: { name: '毫米', factor: 0.001 },
+      cm: { name: '厘米', factor: 0.01 },
+      m: { name: '米', factor: 1 },
+      km: { name: '千米', factor: 1000 },
+      in: { name: '英寸', factor: 0.0254 },
+      ft: { name: '英尺', factor: 0.3048 },
+      yd: { name: '码', factor: 0.9144 },
+      mi: { name: '英里', factor: 1609.344 }
+    };
+
+    const weightUnits = {
+      mg: { name: '毫克', factor: 0.000001 },
+      g: { name: '克', factor: 0.001 },
+      kg: { name: '千克', factor: 1 },
+      t: { name: '吨', factor: 1000 },
+      oz: { name: '盎司', factor: 0.0283495 },
+      lb: { name: '磅', factor: 0.453592 }
+    };
+
+    function getStoredData(key, defaultValue) {
+      try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+      } catch {
+        return defaultValue;
+      }
+    }
+
+    function saveData(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function updateStats(toolName) {
+      const stats = getStoredData('toolStats', {});
+      stats[toolName] = (stats[toolName] || 0) + 1;
+      saveData('toolStats', stats);
+      const recent = getStoredData('recentUsage', []);
+      const existingIndex = recent.findIndex(item => item.tool === toolName);
+      if (existingIndex >= 0) {
+        recent[existingIndex].count++;
+        recent[existingIndex].time = Date.now();
+      } else {
+        recent.push({ tool: toolName, count: 1, time: Date.now() });
+      }
+      saveData('recentUsage', recent.slice(-10));
+      updateStatsDisplay();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function convertLength() {
+      const fromValue = parseFloat(document.getElementById('lengthFrom').value);
+      const fromUnit = document.getElementById('lengthFromUnit').value;
+      const toUnit = document.getElementById('lengthToUnit').value;
+      const resultElement = document.getElementById('lengthResult');
+      const errorElement = document.getElementById('lengthError');
+
+      errorElement.classList.remove('show');
+
+      if (isNaN(fromValue) || fromValue === '') {
+        errorElement.classList.add('show');
+        resultElement.textContent = '—';
+        document.getElementById('lengthTo').value = '';
+        return;
+      }
+
+      const baseValue = fromValue * lengthUnits[fromUnit].factor;
+      const result = baseValue / lengthUnits[toUnit].factor;
+
+      const formattedResult = result.toFixed(4);
+      document.getElementById('lengthTo').value = formattedResult;
+      resultElement.innerHTML = `${formattedResult} <span class="result-unit">${lengthUnits[toUnit].name}</span>`;
+      updateStats('converter');
+    }
+
+    function convertWeight() {
+      const fromValue = parseFloat(document.getElementById('weightFrom').value);
+      const fromUnit = document.getElementById('weightFromUnit').value;
+      const toUnit = document.getElementById('weightToUnit').value;
+      const resultElement = document.getElementById('weightResult');
+      const errorElement = document.getElementById('weightError');
+
+      errorElement.classList.remove('show');
+
+      if (isNaN(fromValue) || fromValue === '') {
+        errorElement.classList.add('show');
+        resultElement.textContent = '—';
+        document.getElementById('weightTo').value = '';
+        return;
+      }
+
+      const baseValue = fromValue * weightUnits[fromUnit].factor;
+      const result = baseValue / weightUnits[toUnit].factor;
+
+      const formattedResult = result.toFixed(4);
+      document.getElementById('weightTo').value = formattedResult;
+      resultElement.innerHTML = `${formattedResult} <span class="result-unit">${weightUnits[toUnit].name}</span>`;
+      updateStats('converter');
+    }
+
+    function swapLengthUnits() {
+      const fromUnit = document.getElementById('lengthFromUnit');
+      const toUnit = document.getElementById('lengthToUnit');
+      const temp = fromUnit.value;
+      fromUnit.value = toUnit.value;
+      toUnit.value = temp;
+      convertLength();
+    }
+
+    function swapWeightUnits() {
+      const fromUnit = document.getElementById('weightFromUnit');
+      const toUnit = document.getElementById('weightToUnit');
+      const temp = fromUnit.value;
+      fromUnit.value = toUnit.value;
+      toUnit.value = temp;
+      convertWeight();
+    }
+
+    let todos = [];
+
+    function loadTodos() {
+      todos = getStoredData('todos', []);
+      renderTodos();
+      updateTodoStats();
+    }
+
+    function saveTodos() {
+      saveData('todos', todos);
+    }
+
+    function renderTodos() {
+      const todoList = document.getElementById('todoList');
+      todoList.innerHTML = '';
+
+      todos.forEach((todo, index) => {
+        const li = document.createElement('li');
+        li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+        li.innerHTML = `
+          <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo(${index})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="todo-text">${todo.text}</span>
+          <button class="todo-delete" onclick="deleteTodo(${index})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        `;
+        todoList.appendChild(li);
+      });
+    }
+
+    function addTodo() {
+      const input = document.getElementById('todoInput');
+      const text = input.value.trim();
+      if (text) {
+        todos.push({ id: Date.now(), text, completed: false });
+        input.value = '';
+        saveTodos();
+        renderTodos();
+        updateTodoStats();
+        updateStats('todo');
+      }
+    }
+
+    function toggleTodo(index) {
+      todos[index].completed = !todos[index].completed;
+      saveTodos();
+      renderTodos();
+      updateTodoStats();
+    }
+
+    function deleteTodo(index) {
+      todos.splice(index, 1);
+      saveTodos();
+      renderTodos();
+      updateTodoStats();
+    }
+
+    function updateTodoStats() {
+      const total = todos.length;
+      const completed = todos.filter(t => t.completed).length;
+      const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      document.getElementById('todoTotal').textContent = total;
+      document.getElementById('todoCompleted').textContent = completed;
+      document.getElementById('todoProgress').textContent = `${progress}%`;
+    }
+
+    function appendToDisplay(value) {
+      const display = document.getElementById('calcDisplay');
+      if (display.value === '0' && value !== '.') {
+        display.value = value;
+      } else {
+        display.value += value;
+      }
+    }
+
+    function clearCalculator() {
+      document.getElementById('calcDisplay').value = '0';
+      document.getElementById('calcHistory').textContent = '';
+    }
+
+    function calculate() {
+      const display = document.getElementById('calcDisplay');
+      const history = document.getElementById('calcHistory');
+      let expression = display.value.replace('×', '*').replace('−', '-');
+
+      try {
+        const result = eval(expression);
+        history.textContent = `${display.value} =`;
+        display.value = result;
+        updateStats('calculator');
+      } catch {
+        display.value = 'Error';
+        history.textContent = '';
+      }
+    }
+
+    function updateStatsDisplay() {
+      const stats = getStoredData('toolStats', {});
+      const todos = getStoredData('todos', []);
+      const completed = todos.filter(t => t.completed).length;
+      const progress = todos.length > 0 ? Math.round((completed / todos.length) * 100) : 0;
+
+      document.getElementById('statConversions').textContent = stats.converter || 0;
+      document.getElementById('statTodos').textContent = todos.length;
+      document.getElementById('statCompleted').textContent = `${progress}%`;
+      document.getElementById('statCalculations').textContent = stats.calculator || 0;
+
+      const recent = getStoredData('recentUsage', []);
+      const recentList = document.getElementById('recentList');
+      recentList.innerHTML = '';
+
+      const toolNames = {
+        converter: '单位换算',
+        todo: '待办事项',
+        calculator: '计算器'
+      };
+
+      recent.sort((a, b) => b.time - a.time).forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'recent-item';
+        const date = new Date(item.time);
+        const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        li.innerHTML = `
+          <div class="recent-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </div>
+          <div class="recent-info">
+            <div class="recent-name">${toolNames[item.tool] || item.tool}</div>
+            <div class="recent-time">${timeStr}</div>
+          </div>
+          <div class="recent-count">${item.count}次</div>
+        `;
+        recentList.appendChild(li);
+      });
+    }
+
+    function showExportModal() {
+      const data = {
+        todos: getStoredData('todos', []),
+        toolStats: getStoredData('toolStats', {}),
+        recentUsage: getStoredData('recentUsage', []),
+        exportTime: Date.now()
+      };
+      document.getElementById('exportData').value = JSON.stringify(data, null, 2);
+      document.getElementById('exportModal').classList.add('show');
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('show');
+    }
+
+    function copyExportData() {
+      const textarea = document.getElementById('exportData');
+      textarea.select();
+      document.execCommand('copy');
+      showToast('数据已复制到剪贴板');
+      closeExportModal();
+    }
+
+    function showImportModal() {
+      document.getElementById('importData').value = '';
+      document.getElementById('importModal').classList.add('show');
+    }
+
+    function closeImportModal() {
+      document.getElementById('importModal').classList.remove('show');
+    }
+
+    function importData() {
+      const input = document.getElementById('importData');
+      try {
+        const data = JSON.parse(input.value);
+        if (data.todos) saveData('todos', data.todos);
+        if (data.toolStats) saveData('toolStats', data.toolStats);
+        if (data.recentUsage) saveData('recentUsage', data.recentUsage);
+        loadTodos();
+        updateStatsDisplay();
+        showToast('数据导入成功');
+        closeImportModal();
+      } catch {
+        showToast('导入失败，请检查数据格式');
+      }
+    }
+
+    function switchTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      saveData('theme', newTheme);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const icon = document.querySelector('.theme-toggle svg');
+      if (theme === 'dark') {
+        icon.innerHTML = `
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        `;
+      } else {
+        icon.innerHTML = `
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        `;
+      }
+    }
+
+    function switchPage(pageId) {
+      document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+      document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+      document.getElementById(`${pageId}-page`).classList.add('active');
+      if (pageId === 'stats') {
+        updateStatsDisplay();
+      }
+    }
+
+    function init() {
+      const savedTheme = getStoredData('theme', 'light');
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      updateThemeIcon();
+      loadTodos();
+      updateStatsDisplay();
+
+      document.getElementById('lengthFrom').addEventListener('input', convertLength);
+      document.getElementById('lengthFromUnit').addEventListener('change', convertLength);
+      document.getElementById('lengthToUnit').addEventListener('change', convertLength);
+
+      document.getElementById('weightFrom').addEventListener('input', convertWeight);
+      document.getElementById('weightFromUnit').addEventListener('change', convertWeight);
+      document.getElementById('weightToUnit').addEventListener('change', convertWeight);
+
+      document.getElementById('todoInput').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') addTodo();
+      });
+
+      document.getElementById('themeToggle').addEventListener('click', switchTheme);
+
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => switchPage(tab.dataset.page));
+      });
+
+      document.getElementById('exportModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('exportModal')) closeExportModal();
+      });
+
+      document.getElementById('importModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('importModal')) closeImportModal();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
